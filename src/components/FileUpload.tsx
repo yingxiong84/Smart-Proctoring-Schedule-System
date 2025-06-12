@@ -97,13 +97,13 @@ const FileUpload: React.FC<FileUploadProps> = ({ type, onDataLoaded, className =
   const inputId = `file-input-${type}`;
 
   return (
-    <div className={`space-y-3 ${className}`}>
-      {/* File Drop Zone */}
+    <div className={`space-y-2 ${className}`}>
+      {/* Compact File Drop Zone */}
       <div
         className={`
-          relative border-2 border-dashed rounded-xl p-4 transition-all cursor-pointer group
+          relative border-2 border-dashed rounded-lg p-3 transition-all cursor-pointer group
           ${isDragOver 
-            ? `border-${currentConfig.color}-400 bg-${currentConfig.color}-50 scale-105` 
+            ? `border-${currentConfig.color}-400 bg-${currentConfig.color}-50 scale-[1.02]` 
             : uploadedFile 
               ? `border-${currentConfig.color}-400 bg-${currentConfig.color}-50/50` 
               : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
@@ -125,20 +125,20 @@ const FileUpload: React.FC<FileUploadProps> = ({ type, onDataLoaded, className =
         />
 
         {isLoading ? (
-          <div className="flex items-center justify-center gap-3 py-4">
+          <div className="flex items-center justify-center gap-2 py-2">
             <LoadingSpinner size="sm" className={`text-${currentConfig.color}-500`} />
-            <span className="text-sm text-gray-600 font-medium">智能解析中...</span>
+            <span className="text-xs text-gray-600 font-medium">解析中...</span>
           </div>
         ) : uploadedFile ? (
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 bg-${currentConfig.color}-100 rounded-lg`}>
-                <FileText className={`w-5 h-5 text-${currentConfig.color}-600`} />
+            <div className="flex items-center gap-2">
+              <div className={`p-1.5 bg-${currentConfig.color}-100 rounded-md`}>
+                <FileText className={`w-4 h-4 text-${currentConfig.color}-600`} />
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">{uploadedFile.name}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <CheckCircle className="w-3 h-3 text-green-500" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-gray-900 truncate">{uploadedFile.name}</p>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                   <span className="text-xs text-gray-500">
                     {processingResult?.data.length || 0} 条记录
                   </span>
@@ -150,53 +150,64 @@ const FileUpload: React.FC<FileUploadProps> = ({ type, onDataLoaded, className =
                 e.stopPropagation();
                 handleRemove();
               }}
-              className="p-2 rounded-lg hover:bg-red-100 text-red-500 transition-colors group"
+              className="p-1.5 rounded-md hover:bg-red-100 text-red-500 transition-colors group flex-shrink-0"
               title="移除文件"
             >
-              <X className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <X className="w-3 h-3 group-hover:scale-110 transition-transform" />
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-3 py-2">
-            <div className={`p-3 bg-${currentConfig.color}-100 rounded-xl group-hover:scale-110 transition-transform`}>
-              <Upload className={`w-6 h-6 text-${currentConfig.color}-600`} />
+          <div className="flex items-center gap-3 py-1">
+            <div className={`p-2 bg-${currentConfig.color}-100 rounded-lg group-hover:scale-105 transition-transform flex-shrink-0`}>
+              <Upload className={`w-4 h-4 text-${currentConfig.color}-600`} />
             </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-900 mb-1">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900">
                 上传{currentConfig.label}
               </p>
-              <p className="text-xs text-gray-500">{currentConfig.description}</p>
-              <div className="flex items-center justify-center gap-1 mt-2">
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="text-xs text-gray-500">{currentConfig.description}</span>
                 <Zap className="w-3 h-3 text-yellow-500" />
-                <span className="text-xs text-gray-400">支持拖拽上传</span>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Processing Results */}
+      {/* Compact Processing Results */}
       {processingResult && (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {processingResult.errors.length > 0 && (
-            <Alert
-              type="error"
-              title="处理错误"
-              message={processingResult.errors.join('\n')}
-            />
+            <div className="p-2 bg-red-50 border border-red-200 rounded-md">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-red-800">处理错误</p>
+                  <p className="text-xs text-red-600 mt-0.5">{processingResult.errors.join('; ')}</p>
+                </div>
+              </div>
+            </div>
           )}
           {processingResult.warnings.length > 0 && (
-            <Alert
-              type="warning"
-              title="处理警告"
-              message={processingResult.warnings.join('\n')}
-            />
+            <div className="p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-yellow-800">处理警告</p>
+                  <p className="text-xs text-yellow-600 mt-0.5">{processingResult.warnings.join('; ')}</p>
+                </div>
+              </div>
+            </div>
           )}
           {processingResult.errors.length === 0 && processingResult.data.length > 0 && (
-            <Alert
-              type="success"
-              message={`成功加载 ${processingResult.data.length} 条${currentConfig.label}记录`}
-            />
+            <div className="p-2 bg-green-50 border border-green-200 rounded-md">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                <p className="text-xs text-green-700 font-medium">
+                  成功加载 {processingResult.data.length} 条{currentConfig.label}记录
+                </p>
+              </div>
+            </div>
           )}
         </div>
       )}
